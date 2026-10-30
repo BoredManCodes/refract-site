@@ -1,3 +1,5 @@
+import { handleEmail, handleInteraction } from "./mail.js";
+
 const JSON_HEADERS = { "content-type": "application/json", "x-content-type-options": "nosniff", "cache-control": "no-store" };
 const SESSION_TTL = 7 * 86400;
 const DISCORD = "https://discord.com/api/v10";
@@ -163,10 +165,12 @@ export default {
     if (pathname === "/api/status") return status(req, env);
     if (pathname === "/api/me") return me(req, env);
     if (pathname === "/api/apply") return apply(req, env);
+    if (pathname === "/api/discord/interactions" && req.method === "POST") return handleInteraction(req, env);
     if (pathname === "/auth/login") return login(req, env);
     if (pathname === "/auth/callback") return callback(req, env);
     if (pathname === "/auth/logout") return logout(req, env);
     if (pathname.startsWith("/api/")) return json({ error: "not found" }, 404);
     return env.ASSETS.fetch(req);
   },
+  email: (message, env) => handleEmail(message, env),
 };

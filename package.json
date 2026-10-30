@@ -12,5 +12,8 @@
   "type": "commonjs",
   "devDependencies": {
     "wrangler": "^4.156.0"
+  },
+  "dependencies": {
+    "postal-mime": "^4.2.0"
   }
 }
