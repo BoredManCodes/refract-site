@@ -446,7 +446,7 @@ Refract SMP</a>
   var PAL = ['var(--av1)', 'var(--av2)', 'var(--av3)', 'var(--av4)', 'var(--av5)', 'var(--av6)'];
   var ROLE = { head: 'var(--gold)', admin: 'var(--role-admin)', staff: 'var(--role-staff)' };
   function addMedia(el, media) {
-    if (!media || !/^\d{15,25}$/.test(media.id || '')) return;
+    if (!media || !/^\d{15,25}\.[aue]\d{1,2}[it]?$/.test(media.id || '')) return null;
     var node, src = '/api/media/' + media.id;
     if (media.kind === 'video') {
       node = document.createElement('video');
@@ -458,6 +458,65 @@ Refract SMP</a>
     node.style.cssText = 'display:block;max-width:100%;max-height:280px;border-radius:8px;margin-top:4px';
     node.onerror = function () { if (node.parentNode) node.parentNode.removeChild(node); };
     el.appendChild(node);
+    return node;
+  }
+  function safeUrl(u) { return /^https?:\/\//i.test(u || '') ? u : null; }
+  function mk(tag, css, text) {
+    var n = document.createElement(tag);
+    if (css) n.style.cssText = css;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+  function addEmbed(el, e) {
+    var colour = /^#[0-9a-f]{6}$/i.test(e.color || '') ? e.color : '#1e1f22';
+    var card = mk('div', 'margin-top:6px;max-width:520px;box-sizing:border-box;border-left:4px solid ' + colour + ';background:#2b2d31;border-radius:4px;padding:8px 16px 16px 12px;display:flex;gap:16px;align-items:flex-start;color:#dbdee1;font-family:"gg sans","Noto Sans","Helvetica Neue",Helvetica,Arial,sans-serif');
+    var body = mk('div', 'flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:8px;padding-top:8px');
+    if (e.author && e.author.name) {
+      var au = mk('div', 'display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:#f2f3f5');
+      if (/^https:\/\/cdn\.discordapp\.com\//.test(e.author.icon || '')) {
+        var ai = mk('img', 'width:24px;height:24px;border-radius:50%;object-fit:cover');
+        ai.src = e.author.icon; ai.alt = ''; ai.onerror = function () { ai.remove(); };
+        au.appendChild(ai);
+      }
+      au.appendChild(mk('span', null, e.author.name));
+      body.appendChild(au);
+    }
+    if (e.title) {
+      var href = safeUrl(e.url), tt;
+      if (href) { tt = mk('a', 'font-weight:600;font-size:16px;line-height:1.375;color:#00a8fc;text-decoration:none', e.title); tt.href = href; tt.target = '_blank'; tt.rel = 'noopener noreferrer'; }
+      else tt = mk('div', 'font-weight:600;font-size:16px;line-height:1.375;color:#f2f3f5', e.title);
+      body.appendChild(tt);
+    }
+    if (e.description) body.appendChild(mk('div', 'font-size:14px;line-height:1.375;overflow-wrap:anywhere;white-space:pre-wrap', e.description));
+    if (e.fields && e.fields.length) {
+      var grid = mk('div', 'display:grid;grid-template-columns:repeat(12,1fr);gap:8px');
+      var run = 0;
+      e.fields.forEach(function (f, i) {
+        // discord packs up to 3 inline fields per row; anything else takes the full row
+        var next = e.fields[i + 1], span = 12;
+        if (f.inline) {
+          var left = 0; for (var j = i; j < e.fields.length && e.fields[j].inline && left < 3; j++) left++;
+          if (run === 0) run = left;
+          span = 12 / run;
+          if (--run < 0) run = 0;
+        } else run = 0;
+        var fb = mk('div', 'min-width:0;grid-column:span ' + Math.round(span));
+        fb.appendChild(mk('div', 'font-size:14px;font-weight:600;color:#f2f3f5;margin-bottom:2px;overflow-wrap:anywhere', f.name));
+        fb.appendChild(mk('div', 'font-size:14px;line-height:1.375;overflow-wrap:anywhere;white-space:pre-wrap', f.value));
+        grid.appendChild(fb);
+      });
+      body.appendChild(grid);
+    }
+    if (e.image) { var im = addMedia(body, e.image); if (im) { im.style.marginTop = '0'; im.style.borderRadius = '4px'; im.style.maxHeight = '300px'; } }
+    var foot = [e.footer, e.timestamp ? new Date(e.timestamp).toLocaleString() : null].filter(Boolean).join(' • ');
+    if (foot) body.appendChild(mk('div', 'font-size:12px;line-height:1.333;font-weight:500;color:#b5bac1', foot));
+    card.appendChild(body);
+    if (e.thumbnail) {
+      var th = mk('div', 'flex:none;padding-top:8px');
+      var tn = addMedia(th, e.thumbnail);
+      if (tn) { tn.style.maxWidth = '80px'; tn.style.maxHeight = '80px'; tn.style.marginTop = '0'; tn.style.borderRadius = '4px'; card.appendChild(th); }
+    }
+    el.appendChild(card);
   }
   var chat = { seen: {}, queue: [], timer: null, started: false };
   var CHAT_MAX = 30, CHAT_SEED = 12;
@@ -465,7 +524,7 @@ Refract SMP</a>
     var box = $('general');
     if (!list || !list.length) return;
     var fresh = list.slice(-CHAT_MAX).filter(function (m) {
-      var k = (m.when || '') + '|' + (m.who || '') + '|' + (m.text || '');
+      var k = (m.when || '') + '|' + (m.who || '') + '|' + (m.text || '') + '|' + ((m.embeds && m.embeds[0] && (m.embeds[0].title || m.embeds[0].description)) || '') + '|' + ((m.media && m.media.id) || '');
       if (chat.seen[k]) return false;
       chat.seen[k] = 1; return true;
     });
@@ -501,7 +560,11 @@ Refract SMP</a>
       var head = document.createElement('div'); head.style.cssText = 'display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px';
       var nm = document.createElement('span'); nm.style.cssText = 'font-weight:600;font-size:15px;color:' + (ROLE[m.role] || 'var(--fg)'); nm.textContent = who;
       var tx = document.createElement('div'); tx.style.cssText = 'font-size:15px;line-height:1.45;overflow-wrap:anywhere'; tx.textContent = m.text || ''; addMedia(tx, m.media);
+      (m.more_media || []).forEach(function (mm) { addMedia(tx, mm); });
+      (m.embeds || []).forEach(function (e) { addEmbed(tx, e); });
+      if (!m.text && !tx.firstChild) tx.style.display = 'none';
       head.appendChild(nm);
+      if (m.bot) head.appendChild(mk('span', 'font:500 10px/15px "gg sans","Noto Sans",Helvetica,Arial,sans-serif;padding:0 5px;border-radius:3px;background:#5865f2;color:#fff;align-self:center;text-transform:uppercase', 'BOT'));
       if (m.reply && m.reply.who) {
         var rp = document.createElement('div');
         rp.style.cssText = 'font-size:13px;color:var(--muted);border-left:2px solid rgba(255,255,255,.2);padding-left:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';

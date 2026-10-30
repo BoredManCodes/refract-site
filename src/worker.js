@@ -60,7 +60,7 @@ async function status(req, env) {
 // chat images: the bot fetches them from Discord and hands the bytes over, so the page only ever loads same-origin files
 async function media(req, env, pathname) {
   const id = pathname.slice("/api/media/".length);
-  if (req.method !== "GET" || !/^\d{15,25}$/.test(id)) return json({ error: "not found" }, 404);
+  if (req.method !== "GET" || !/^\d{15,25}\.[aue]\d{1,2}[it]?$/.test(id)) return json({ error: "not found" }, 404);
   try {
     const r = await bot(env, "/media/" + id, {}, 15000);
     if (!r.ok) return json({ error: "not found" }, 404);
