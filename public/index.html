@@ -453,7 +453,7 @@ Refract SMP</a>
       node.src = src; node.autoplay = true; node.loop = true; node.muted = true; node.playsInline = true;
     } else {
       node = document.createElement('img');
-      node.src = src; node.alt = 'image'; node.loading = 'lazy';
+      node.src = src; node.alt = 'image';
     }
     node.style.cssText = 'display:block;max-width:100%;max-height:280px;border-radius:8px;margin-top:4px';
     node.onerror = function () { if (node.parentNode) node.parentNode.removeChild(node); };
@@ -578,7 +578,14 @@ Refract SMP</a>
         requestAnimationFrame(function () { requestAnimationFrame(function () { row.style.opacity = '1'; row.style.transform = 'none'; }); });
       } else { box.appendChild(row); }
       if (box.firstChild === row) row.style.marginTop = 'auto';
-      if (atEnd || !animate) box.scrollTop = box.scrollHeight;
+      if (atEnd || !animate) {
+        // images and videos size the row after they load, so keep pinned to the bottom
+        var pin = function () { box.scrollTop = box.scrollHeight; };
+        pin();
+        row.addEventListener('load', pin, true);
+        row.addEventListener('loadeddata', pin, true);
+        setTimeout(function () { row.removeEventListener('load', pin, true); row.removeEventListener('loadeddata', pin, true); }, 15000);
+      }
     }
   }
 
