@@ -445,19 +445,19 @@ Refract SMP</a>
   }
   var PAL = ['var(--av1)', 'var(--av2)', 'var(--av3)', 'var(--av4)', 'var(--av5)', 'var(--av6)'];
   var ROLE = { head: 'var(--gold)', admin: 'var(--role-admin)', staff: 'var(--role-staff)' };
-  var IMG_URL = /^https:\/\/(cdn\.discordapp\.com|media\.discordapp\.net)\/\S+$/;
-  function renderText(el, text) {
-    text.split(/(https:\/\/\S+)/).forEach(function (part) {
-      if (!part) return;
-      if (IMG_URL.test(part)) {
-        var a = document.createElement('a'); a.href = part; a.target = '_blank'; a.rel = 'noopener noreferrer';
-        var im = document.createElement('img');
-        im.src = part; im.alt = 'image'; im.loading = 'lazy';
-        im.style.cssText = 'display:block;max-width:100%;max-height:280px;border-radius:8px;margin-top:4px';
-        im.onerror = function () { a.textContent = part; };
-        a.appendChild(im); el.appendChild(a);
-      } else { el.appendChild(document.createTextNode(part)); }
-    });
+  function addMedia(el, media) {
+    if (!media || !/^\d{15,25}$/.test(media.id || '')) return;
+    var node, src = '/api/media/' + media.id;
+    if (media.kind === 'video') {
+      node = document.createElement('video');
+      node.src = src; node.autoplay = true; node.loop = true; node.muted = true; node.playsInline = true;
+    } else {
+      node = document.createElement('img');
+      node.src = src; node.alt = 'image'; node.loading = 'lazy';
+    }
+    node.style.cssText = 'display:block;max-width:100%;max-height:280px;border-radius:8px;margin-top:4px';
+    node.onerror = function () { if (node.parentNode) node.parentNode.removeChild(node); };
+    el.appendChild(node);
   }
   var chat = { seen: {}, queue: [], timer: null, started: false };
   var CHAT_MAX = 30, CHAT_SEED = 12;
@@ -499,7 +499,7 @@ Refract SMP</a>
       var col = document.createElement('div'); col.style.cssText = 'min-width:0;display:flex;flex-direction:column;gap:2px';
       var head = document.createElement('div'); head.style.cssText = 'display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px';
       var nm = document.createElement('span'); nm.style.cssText = 'font-weight:600;font-size:15px;color:' + (ROLE[m.role] || 'var(--fg)'); nm.textContent = who;
-      var tx = document.createElement('div'); tx.style.cssText = 'font-size:15px;line-height:1.45;overflow-wrap:anywhere'; renderText(tx, m.text || '');
+      var tx = document.createElement('div'); tx.style.cssText = 'font-size:15px;line-height:1.45;overflow-wrap:anywhere'; tx.textContent = m.text || ''; addMedia(tx, m.media);
       head.appendChild(nm); col.appendChild(head); col.appendChild(tx); row.appendChild(av); row.appendChild(col);
       if (animate) {
         row.style.opacity = '0'; row.style.transform = 'translateY(8px)'; row.style.transition = 'opacity .35s, transform .35s';

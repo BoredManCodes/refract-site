@@ -57,6 +57,19 @@ async function status(req, env) {
   }
 }
 
+// chat images: the bot fetches them from Discord and hands the bytes over, so the page only ever loads same-origin files
+async function media(req, env, pathname) {
+  const id = pathname.slice("/api/media/".length);
+  if (req.method !== "GET" || !/^\d{15,25}$/.test(id)) return json({ error: "not found" }, 404);
+  try {
+    const r = await bot(env, "/media/" + id, {}, 15000);
+    if (!r.ok) return json({ error: "not found" }, 404);
+    return new Response(r.body, { headers: { "content-type": r.headers.get("content-type") || "application/octet-stream", "x-content-type-options": "nosniff", "cache-control": "public, max-age=86400" } });
+  } catch {
+    return json({ error: "unavailable" }, 502);
+  }
+}
+
 // ---------- Discord sign-in ----------
 
 async function login(req, env) {
@@ -167,6 +180,7 @@ export default {
     if (pathname === "/api/track") return req.method === "POST" ? handleTrack(req, env, ctx) : json({ error: "method" }, 405, { allow: "POST" });
     if (pathname.startsWith("/admin")) return handleAdmin(req, env, new URL(req.url));
     if (pathname === "/api/status") return status(req, env);
+    if (pathname.startsWith("/api/media/")) return media(req, env, pathname);
     if (pathname === "/api/me") return me(req, env);
     if (pathname === "/api/apply") return apply(req, env);
     if (pathname === "/api/discord/interactions" && req.method === "POST") return handleInteraction(req, env);
