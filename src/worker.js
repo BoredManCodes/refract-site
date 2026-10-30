@@ -96,7 +96,7 @@ async function callback(req, env) {
   const state = url.searchParams.get("state");
   const code = url.searchParams.get("code");
   const clear = setCookie("oauth_state", "", 0, "/auth");
-  const back = () => new Response(null, { status: 302, headers: { location: "/#staff", "set-cookie": clear } });
+  const back = () => new Response(null, { status: 302, headers: { location: "/staff#apply", "set-cookie": clear } });
   if (!code || !state || state !== cookie(req, "oauth_state")) return back();
   const tokenRes = await fetch(DISCORD + "/oauth2/token", {
     method: "POST",
@@ -125,7 +125,7 @@ async function callback(req, env) {
     }),
     { expirationTtl: SESSION_TTL },
   );
-  const headers = new Headers({ location: "/#staff", "cache-control": "no-store" });
+  const headers = new Headers({ location: "/staff#apply", "cache-control": "no-store" });
   headers.append("set-cookie", clear);
   headers.append("set-cookie", setCookie("sid", sid, SESSION_TTL));
   return new Response(null, { status: 302, headers });

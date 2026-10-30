@@ -56,7 +56,7 @@ ${errMsg ? `<p class="err">${errMsg}</p>` : ""}
 
 // Every page in public/ (index.html files outside wp-*). Update when pages are
 // added to the mirror; used to flag pages that have never had a visitor.
-const KNOWN_PAGES = ["/", "/rules", "/privacy"];
+const KNOWN_PAGES = ["/", "/staff", "/rules", "/privacy"];
 
 const normPath = (p) => (p.length > 1 ? p.replace(/\/+$/, "") : p);
 
