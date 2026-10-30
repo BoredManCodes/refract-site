@@ -184,7 +184,7 @@ Refract SMP</a>
 <div style="display:flex;align-items:center;gap:8px;font-weight:600;font-size:16px"><span style="color:var(--muted)">#</span>general<span class="mono" style="font-size:12px;font-weight:400;color:var(--muted);margin-left:8px">Discord</span></div>
 <a class="btn2" style="min-height:36px;font-size:14px" href="https://discord.gg/KRrKVEdMFy" rel="noopener">Open in Discord</a>
 </div>
-<div id="general" style="padding:12px 20px 16px;display:flex;flex-direction:column;gap:14px;min-height:300px;justify-content:flex-end"><div style="color:var(--muted);font-size:15px">Nothing to show yet.</div></div>
+<div id="general" style="padding:12px 20px 16px;display:flex;flex-direction:column;gap:14px;height:360px;overflow-y:auto;overscroll-behavior:contain;scroll-behavior:smooth"><div style="color:var(--muted);font-size:15px">Nothing to show yet.</div></div>
 <div style="padding:12px 20px;border-top:1px solid rgba(255,255,255,.1);font-size:13px;color:var(--muted)">Read only. The latest messages from the public channel.</div>
 </section>
 <div style="flex:1 1 380px;min-width:0;display:flex;flex-direction:column;gap:20px">
@@ -489,6 +489,7 @@ Refract SMP</a>
   }
   function addMessage(box, m, animate) {
     while (box.children.length >= CHAT_MAX) box.removeChild(box.firstChild);
+    var atEnd = box.scrollHeight - box.scrollTop - box.clientHeight < 60;
     {
       var who = m.who || '?';
       var sum = 0; for (var i = 0; i < who.length; i++) sum += who.charCodeAt(i);
@@ -500,12 +501,21 @@ Refract SMP</a>
       var head = document.createElement('div'); head.style.cssText = 'display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px';
       var nm = document.createElement('span'); nm.style.cssText = 'font-weight:600;font-size:15px;color:' + (ROLE[m.role] || 'var(--fg)'); nm.textContent = who;
       var tx = document.createElement('div'); tx.style.cssText = 'font-size:15px;line-height:1.45;overflow-wrap:anywhere'; tx.textContent = m.text || ''; addMedia(tx, m.media);
-      head.appendChild(nm); col.appendChild(head); col.appendChild(tx); row.appendChild(av); row.appendChild(col);
+      head.appendChild(nm);
+      if (m.reply && m.reply.who) {
+        var rp = document.createElement('div');
+        rp.style.cssText = 'font-size:13px;color:var(--muted);border-left:2px solid rgba(255,255,255,.2);padding-left:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
+        rp.textContent = 'Replying to ' + m.reply.who + (m.reply.text ? ': ' + m.reply.text : '');
+        col.appendChild(rp);
+      }
+      col.appendChild(head); col.appendChild(tx); row.appendChild(av); row.appendChild(col);
       if (animate) {
         row.style.opacity = '0'; row.style.transform = 'translateY(8px)'; row.style.transition = 'opacity .35s, transform .35s';
         box.appendChild(row);
         requestAnimationFrame(function () { requestAnimationFrame(function () { row.style.opacity = '1'; row.style.transform = 'none'; }); });
       } else { box.appendChild(row); }
+      if (box.firstChild === row) row.style.marginTop = 'auto';
+      if (atEnd || !animate) box.scrollTop = box.scrollHeight;
     }
   }
 
