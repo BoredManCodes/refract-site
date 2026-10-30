@@ -11,8 +11,8 @@
   "assets": {
     "directory": "./public",
     "binding": "ASSETS",
-    "run_worker_first": ["/api/*", "/auth/*"]
+    "run_worker_first": ["/api/*", "/auth/*", "/admin", "/admin/*"]
   },
-  "kv_namespaces": [{ "binding": "STATUS", "id": "e3c3161e625c4e14927032947718d602" }],
+  "kv_namespaces": [{ "binding": "STATUS", "id": "e3c3161e625c4e14927032947718d602" }, { "binding": "SITE_STATS", "id": "242e922240154df1b86dce4b6dd8bac7" }],
   "vars": { "SERVER_ADDRESS": "", "SERVER_VERSION": "", "DISCORD_CLIENT_ID": "898041623370403870", "BOT_URL": "https://api.refract-smp.com", "MAIL_CHANNEL_ID": "1565584981235994744" }
 }

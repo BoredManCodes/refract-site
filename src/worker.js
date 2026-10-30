@@ -1,3 +1,5 @@
+import { handleTrack } from "./analytics/track.js";
+import { handleAdmin } from "./analytics/admin.js";
 import { handleEmail, handleInteraction } from "./mail.js";
 
 const JSON_HEADERS = { "content-type": "application/json", "x-content-type-options": "nosniff", "cache-control": "no-store" };
@@ -160,8 +162,10 @@ async function apply(req, env) {
 }
 
 export default {
-  async fetch(req, env) {
+  async fetch(req, env, ctx) {
     const { pathname } = new URL(req.url);
+    if (pathname === "/api/track") return req.method === "POST" ? handleTrack(req, env, ctx) : json({ error: "method" }, 405, { allow: "POST" });
+    if (pathname.startsWith("/admin")) return handleAdmin(req, env, new URL(req.url));
     if (pathname === "/api/status") return status(req, env);
     if (pathname === "/api/me") return me(req, env);
     if (pathname === "/api/apply") return apply(req, env);
