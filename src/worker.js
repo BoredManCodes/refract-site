@@ -57,6 +57,21 @@ async function status(req, env) {
   }
 }
 
+async function members(req, env) {
+  if (req.method !== "GET") return json({ error: "method" }, 405, { allow: "GET" });
+  const last = await env.STATUS.get("members", "json"); // { at, data }
+  if (last && Date.now() - last.at < 60000) return json(last.data, 200, { "cache-control": "public, max-age=30" });
+  try {
+    const r = await bot(env, "/members", {}, 10000);
+    if (!r.ok) throw new Error("bot " + r.status);
+    const data = await r.json();
+    await env.STATUS.put("members", JSON.stringify({ at: Date.now(), data }));
+    return json(data, 200, { "cache-control": "public, max-age=30" });
+  } catch {
+    return json(last ? last.data : { members: [], departed: [] }, 200, { "cache-control": "no-store" });
+  }
+}
+
 // chat images: the bot fetches them from Discord and hands the bytes over, so the page only ever loads same-origin files
 async function media(req, env, pathname) {
   const id = pathname.slice("/api/media/".length);
@@ -180,6 +195,7 @@ export default {
     if (pathname === "/api/track") return req.method === "POST" ? handleTrack(req, env, ctx) : json({ error: "method" }, 405, { allow: "POST" });
     if (pathname.startsWith("/admin")) return handleAdmin(req, env, new URL(req.url));
     if (pathname === "/api/status") return status(req, env);
+    if (pathname === "/api/members") return members(req, env);
     if (pathname.startsWith("/api/media/")) return media(req, env, pathname);
     if (pathname === "/api/me") return me(req, env);
     if (pathname === "/api/apply") return apply(req, env);
