@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Refract SMP</title>
+<meta name="description" content="Refract SMP is a survival Minecraft server with no real-money store. One owner, and a Head Admin chosen by player vote every 3 months.">
+<meta name="theme-color" content="#080A11">
+<link rel="icon" type="image/png" href="/favicon-48.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Sora:wght@500;600;700&display=swap">
+<style>
+:root{--fg:#EEF1F8;--muted:#AEB5C6;--accent:#9DBBFF;--ok:#6FDDA2;--warn:#F2C14E;--bad:#FF9484;--spec:.8}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#080A11;color:var(--fg);font:400 16px/1.5 'IBM Plex Sans',system-ui,sans-serif;overflow-x:hidden}
+a{color:var(--accent)}
+a:hover{text-decoration:underline}
+.glass{background:rgba(16,19,30,.62);backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%);border:1px solid rgba(255,255,255,.10);border-radius:18px}
+.edge{padding:1px;border-radius:19px;background:linear-gradient(135deg,rgb(255 160 160 / calc(var(--spec) * .7)),rgb(255 214 150 / calc(var(--spec) * .55)),rgb(150 230 190 / calc(var(--spec) * .5)),rgb(140 190 255 / calc(var(--spec) * .75)),rgb(190 160 255 / calc(var(--spec) * .65)))}
+.edge>.glass{border:0;height:100%;background:rgba(12,15,25,.84)}
+.lbl{font:500 12px/1.2 'IBM Plex Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.mono{font-family:'IBM Plex Mono',monospace}
+.h{font-family:'Sora',sans-serif;letter-spacing:-.015em}
+h1,h2,h3,p,ul,ol{margin:0}
+.btn,.btn2{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 20px;border-radius:12px;font:600 15px/1 'IBM Plex Sans',sans-serif;cursor:pointer;text-decoration:none}
+.btn{border:0;background:var(--accent);color:#0B0D12}
+.btn:hover{text-decoration:none;filter:brightness(1.1)}
+.btn2{padding:0 16px;font-weight:500;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:var(--fg)}
+.btn2:hover{text-decoration:none;background:rgba(255,255,255,.09)}
+button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1200px;margin:0 auto;padding-left:24px;padding-right:24px}
+.row{display:flex;flex-wrap:wrap;gap:20px}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:0 16px;min-height:48px;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);font:400 14px/1 'IBM Plex Mono',monospace}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.dot.on{background:var(--ok)}
+.navlink{color:var(--muted);text-decoration:none;font:500 15px/1 'IBM Plex Sans',sans-serif;padding:14px 4px}
+.navlink:hover{color:var(--fg);text-decoration:none}
+.sec-title{font-size:38px;line-height:1.12;font-weight:600}
+.sub{font-size:17px;line-height:1.55;color:var(--muted)}
+.skip{position:absolute;left:-9999px}
+.skip:focus{left:12px;top:12px;z-index:10;background:#fff;color:#000;padding:8px 12px;border-radius:8px}
+ul.plain{list-style:none;padding:0}
+@media (max-width:640px){h1.hero-title{font-size:44px!important}.sec-title{font-size:30px}.big{font-size:44px!important}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<a class="skip" href="#live">Skip to content</a>
+
+<!-- light field: blurred glows behind the page -->
+<div aria-hidden="true" style="position:fixed;inset:0;overflow:hidden;z-index:0;pointer-events:none">
+<div style="position:absolute;left:-10%;top:-6%;width:60%;height:900px;border-radius:50%;background:#2A3C8F;opacity:.55;filter:blur(150px)"></div>
+<div style="position:absolute;right:-12%;top:4%;width:52%;height:760px;border-radius:50%;background:#5B3C9E;opacity:.4;filter:blur(150px)"></div>
+<div style="position:absolute;left:30%;top:14%;width:40%;height:420px;border-radius:50%;background:#1F8F8A;opacity:.32;filter:blur(140px)"></div>
+<div style="position:absolute;right:-10%;bottom:-10%;width:46%;height:700px;border-radius:50%;background:#6A4A2E;opacity:.3;filter:blur(170px)"></div>
+</div>
+
+<div style="position:relative;z-index:1">
+
+<header class="glass" style="position:sticky;top:0;z-index:5;border-radius:0;border-width:0 0 1px 0">
+<div class="wrap" style="display:flex;flex-wrap:wrap;align-items:center;gap:4px 28px;padding-top:6px;padding-bottom:6px">
+<a href="#top" class="h" style="display:flex;align-items:center;gap:10px;color:var(--fg);text-decoration:none;font-weight:700;font-size:19px;min-height:48px">
+<img src="/logo-96.png" width="36" height="36" alt="" style="border-radius:9px;display:block">
+Refract SMP</a>
+<nav style="display:flex;flex-wrap:wrap;gap:0 22px;flex:1 1 420px" aria-label="Main">
+<a class="navlink" href="#live">Live</a>
+<a class="navlink" href="#rewards">Rewards</a>
+<a class="navlink" href="#governance">Rules</a>
+<a class="navlink" href="#elections">Elections</a>
+<a class="navlink" href="#staff">Apply</a>
+</nav>
+<a class="btn" href="https://discord.gg/724WY2fVSu" rel="noopener">Discord</a>
+</div>
+</header>
+
+<main>
+<!-- HERO -->
+<section id="top" style="position:relative;overflow:hidden;min-height:760px;display:flex;align-items:center;justify-content:center;padding:72px 24px 96px">
+<div aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,10,17,0) 55%,#080A11 100%),radial-gradient(900px 420px at 50% 30%,rgba(120,150,255,.28),rgba(8,10,17,0) 70%)"></div>
+<svg aria-hidden="true" viewBox="0 0 1360 760" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%;opacity:.85;filter:blur(1.5px)">
+<defs><linearGradient id="beam" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity=".95"/></linearGradient></defs>
+<path d="M0 420 L560 380" stroke="url(#beam)" stroke-width="3" fill="none"/>
+<path d="M600 160 L820 560 H380 Z" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.45)" stroke-width="1.5" stroke-linejoin="round"/>
+<g stroke-width="5" stroke-linecap="round" style="mix-blend-mode:screen">
+<path d="M700 372 L1400 150" stroke="#FF9E9E" opacity=".75"/>
+<path d="M702 380 L1400 262" stroke="#FFD79A" opacity=".75"/>
+<path d="M704 388 L1400 372" stroke="#C9F0A8" opacity=".7"/>
+<path d="M706 396 L1400 482" stroke="#8FD8FF" opacity=".75"/>
+<path d="M708 404 L1400 592" stroke="#B49BFF" opacity=".75"/>
+</g>
+</svg>
+<div class="edge" style="position:relative;max-width:760px;width:100%">
+<div class="glass" style="background:rgba(9,11,19,.58);padding:48px 40px;display:flex;flex-direction:column;align-items:center;gap:22px;text-align:center">
+<span class="lbl">Successor to Prism SMP · Opens early December</span>
+<h1 class="h hero-title" style="font-size:60px;line-height:1.02;font-weight:700">Refract SMP</h1>
+<p class="h" style="font-size:24px;line-height:1.3;font-weight:500;max-width:560px">Survival with no real-money store. Nobody pays to win, now or later.</p>
+<p class="sub" style="max-width:540px">Earn rewards by voting and by playing. One owner, and a Head Admin chosen by player vote every 3 months.</p>
+<div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center">
+<div id="addr-wrap" class="pill" style="padding:5px 5px 5px 16px;gap:14px">
+<span id="addr" style="font-size:15px">Address announced before launch</span>
+<button id="copy" class="btn2" style="min-height:38px;display:none" type="button" aria-label="Copy server address">Copy</button>
+</div>
+<span id="ver" class="pill" style="display:none;color:var(--muted)"></span>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:4px">
+<a class="btn" href="https://discord.gg/724WY2fVSu" rel="noopener">Join the Discord</a>
+<a class="btn2" href="#live" aria-label="Enter the site">Enter <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></a>
+</div>
+</div>
+</div>
+</section>
+
+<!-- LIVE -->
+<section id="live" class="wrap" style="padding-top:24px;padding-bottom:80px;display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;flex-direction:column;gap:10px;max-width:640px">
+<span class="lbl" style="display:flex;align-items:center;gap:10px"><span id="live-dot" class="dot"></span><span id="live-text">Live from the server</span></span>
+<h2 class="h sec-title">What is happening right now.</h2>
+</div>
+
+<div class="row">
+<div class="edge" style="flex:1 1 380px;min-width:0">
+<div class="glass" style="padding:24px;display:flex;flex-direction:column;gap:18px">
+<span class="lbl">Current Head Admin</span>
+<div style="display:flex;align-items:center;gap:16px">
+<div id="ha-av" class="h" style="flex:none;width:64px;height:64px;border-radius:16px;background:#F4C77A;color:#0B0D12;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:28px;overflow:hidden">?</div>
+<div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+<div id="ha-name" class="h" style="font-size:26px;font-weight:600;overflow-wrap:anywhere">Not appointed yet</div>
+<div id="ha-sub" style="color:var(--muted);font-size:15px">The Owner appoints the first term.</div>
+</div>
+</div>
+<div id="ha-term" style="display:none;flex-direction:column;gap:8px">
+<div style="display:flex;justify-content:space-between;font-size:14px;color:var(--muted)"><span id="ha-day"></span><span id="ha-prev"></span></div>
+<div style="height:8px;border-radius:4px;background:rgba(255,255,255,.1);overflow:hidden"><div id="ha-bar" style="height:100%;background:var(--accent);width:0"></div></div>
+</div>
+</div>
+</div>
+<div class="row" style="flex:1 1 380px;min-width:0">
+<div class="glass" style="flex:1 1 160px;padding:18px 20px;display:flex;flex-direction:column;gap:6px"><span class="lbl">Discord members</span><span id="st-members" class="h" style="font-size:32px;font-weight:600">&mdash;</span><span style="font-size:13px;color:var(--muted)">in the server</span></div>
+<div class="glass" style="flex:1 1 160px;padding:18px 20px;display:flex;flex-direction:column;gap:6px"><span class="lbl">Linked accounts</span><span id="st-linked" class="h" style="font-size:32px;font-weight:600">&mdash;</span><span id="st-linked-sub" style="font-size:13px;color:var(--muted)">Minecraft linked</span></div>
+<div class="glass" style="flex:1 1 160px;padding:18px 20px;display:flex;flex-direction:column;gap:6px"><span class="lbl">Staff</span><span id="st-staff" class="h" style="font-size:32px;font-weight:600">&mdash;</span><span style="font-size:13px;color:var(--muted)">Admins and Staff</span></div>
+</div>
+</div>
+
+<div class="glass" style="padding:28px;display:flex;flex-wrap:wrap;gap:28px;align-items:center">
+<div style="flex:1 1 280px;display:flex;flex-direction:column;gap:10px;min-width:0">
+<span class="lbl">Next election</span>
+<div id="cd-label" class="h" style="font-size:28px;font-weight:600">No election scheduled</div>
+<div style="color:var(--muted);font-size:15px;line-height:1.5">Terms run 90 days. Nominations open about 3 weeks before the end and stay open 14 days. Voting runs 7 days.</div>
+</div>
+<div id="cd-timer" role="timer" style="display:none;gap:12px">
+<div class="cd"><div class="h mono n" id="cd-d">00</div><div class="lbl">Days</div></div>
+<div class="cd"><div class="h mono n" id="cd-h">00</div><div class="lbl">Hours</div></div>
+<div class="cd"><div class="h mono n" id="cd-m">00</div><div class="lbl">Min</div></div>
+<div class="cd"><div class="h mono n" id="cd-s">00</div><div class="lbl">Sec</div></div>
+</div>
+<div style="flex:1 1 100%;display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;height:12px;border-radius:6px;overflow:hidden;gap:2px" aria-hidden="true">
+<div style="flex:69 1 0;background:rgba(255,255,255,.12)"></div><div style="flex:14 1 0;background:#8FB8FF"></div><div style="flex:7 1 0;background:#B49BFF"></div>
+</div>
+<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted)"><span>Term running</span><span>Nominations · 14 days</span><span>Voting · 7 days</span></div>
+</div>
+</div>
+<style>.cd{min-width:76px;padding:14px 8px;border-radius:14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);text-align:center}.cd .n{font-size:34px;font-weight:600;font-variant-numeric:tabular-nums}.cd .lbl{margin-top:4px}</style>
+
+<div class="row">
+<section class="glass" style="flex:1 1 480px;min-width:0;display:flex;flex-direction:column" aria-label="Discord general preview">
+<div style="padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:space-between;gap:12px">
+<div style="display:flex;align-items:center;gap:8px;font-weight:600;font-size:16px"><span style="color:var(--muted)">#</span>general<span class="mono" style="font-size:12px;font-weight:400;color:var(--muted);margin-left:8px">Discord</span></div>
+<a class="btn2" style="min-height:36px;font-size:14px" href="https://discord.gg/724WY2fVSu" rel="noopener">Open in Discord</a>
+</div>
+<div id="general" style="padding:12px 20px 16px;display:flex;flex-direction:column;gap:14px;min-height:300px;justify-content:flex-end"><div style="color:var(--muted);font-size:15px">Nothing to show yet.</div></div>
+<div style="padding:12px 20px;border-top:1px solid rgba(255,255,255,.1);font-size:13px;color:var(--muted)">Read only. The latest messages from the public channel.</div>
+</section>
+<div style="flex:1 1 380px;min-width:0;display:flex;flex-direction:column;gap:20px">
+<section class="glass" style="padding:24px;display:flex;flex-direction:column;gap:10px;flex:1">
+<span class="lbl">Game chat</span>
+<div class="h" style="font-size:24px;font-weight:600">Coming soon</div>
+<p class="sub" style="font-size:15px">Messages from inside the game will show here once the server is open.</p>
+</section>
+<section class="glass" style="padding:24px;display:flex;flex-direction:column;gap:10px;flex:1">
+<span class="lbl">Players online</span>
+<div class="h" style="font-size:24px;font-weight:600">Coming soon</div>
+<p class="sub" style="font-size:15px">A live count and player list arrive with the server.</p>
+</section>
+</div>
+</div>
+
+<div class="glass" style="padding:20px 24px;display:flex;flex-direction:column;gap:14px">
+<span class="lbl">Public admin log · latest entries</span>
+<div id="log" style="display:flex;flex-direction:column;gap:12px"><div style="color:var(--muted);font-size:15px">No entries yet.</div></div>
+</div>
+</section>
+
+<!-- NO STORE + REWARDS -->
+<section id="rewards" class="wrap" style="padding-top:40px;padding-bottom:96px;display:flex;flex-direction:column;gap:40px">
+<div class="edge">
+<div class="glass" style="padding:56px 40px;display:flex;flex-direction:column;gap:18px;align-items:center;text-align:center">
+<span class="lbl">The one rule about money</span>
+<h2 class="h big" style="font-size:64px;line-height:1.02;font-weight:700">There is no store.</h2>
+<p class="h" style="font-size:24px;line-height:1.35;font-weight:500;max-width:640px">Refract will never be pay to win. The server sells nothing for real money.</p>
+<p class="sub" style="max-width:560px">The only shops are in game, run by players who sell items to other players. Everything else comes from playing and from voting.</p>
+</div>
+</div>
+<div class="row">
+<div class="glass" style="flex:1 1 440px;min-width:0;padding:32px;display:flex;flex-direction:column;gap:14px">
+<span class="lbl">Voting rewards</span>
+<h3 class="h" style="font-size:28px;font-weight:600">Vote for the server, get rewarded.</h3>
+<p class="sub">Voting earns rewards in game. Vote links and the reward list are posted in Discord before launch.</p>
+</div>
+<div class="glass" style="flex:1 1 440px;min-width:0;padding:32px;display:flex;flex-direction:column;gap:14px">
+<span class="lbl">Playtime rewards</span>
+<h3 class="h" style="font-size:28px;font-weight:600">Time in the world counts.</h3>
+<p class="sub">Time spent playing earns rewards in game. The playtime tiers are posted in Discord before launch.</p>
+</div>
+</div>
+</section>
+
+<!-- GOVERNANCE -->
+<section id="governance" class="wrap" style="padding-top:24px;padding-bottom:96px;display:flex;flex-direction:column;gap:32px">
+<div style="display:flex;flex-direction:column;gap:12px;max-width:720px">
+<span class="lbl">How we're run</span>
+<h2 class="h sec-title">The Head Admin has real power and a short leash.</h2>
+<p class="sub">The Head Admin answers to the Owner. Sensible ideas go ahead. Anything that affects players is posted to the public admin log with a reason.</p>
+</div>
+<div class="row">
+<div class="glass" style="flex:1 1 300px;padding:24px;display:flex;flex-direction:column;gap:14px">
+<h3 class="h" style="font-size:20px;font-weight:600;color:var(--ok)">Without asking</h3>
+<ul style="padding-left:20px;display:flex;flex-direction:column;gap:8px;line-height:1.5;font-size:15px">
+<li>Add or remove Admins and Staff, with a reason posted publicly</li>
+<li>Change visible, reversible gameplay settings: spawn, events, build rules</li>
+<li>Ban or mute players for breaking posted rules</li>
+<li>Run events, wipe small areas, update the server rules</li>
+</ul></div>
+<div class="glass" style="flex:1 1 300px;padding:24px;display:flex;flex-direction:column;gap:14px">
+<h3 class="h" style="font-size:20px;font-weight:600;color:var(--warn)">Needs the Owner first</h3>
+<ul style="padding-left:20px;display:flex;flex-direction:column;gap:8px;line-height:1.5;font-size:15px">
+<li>A world reset, map wipe or Minecraft version change</li>
+<li>Anything that costs money</li>
+<li>Free items, ranks or permissions outside an announced event</li>
+<li>A permanent ban of a non-obvious rule-breaker, or any ban of staff</li>
+<li>Changing these rules or the election rules</li>
+</ul></div>
+<div class="glass" style="flex:1 1 300px;padding:24px;display:flex;flex-direction:column;gap:14px">
+<h3 class="h" style="font-size:20px;font-weight:600;color:var(--bad)">Never</h3>
+<ul style="padding-left:20px;display:flex;flex-direction:column;gap:8px;line-height:1.5;font-size:15px">
+<li>Take or spawn items, ranks or permissions for themselves or friends</li>
+<li>Use admin powers to win a dispute they are part of</li>
+<li>Delete or edit the admin log</li>
+<li>Ignore a vote result or hold power past the term</li>
+</ul></div>
+</div>
+<div class="glass" style="padding:20px 24px;display:flex;flex-direction:column;gap:10px">
+<span class="lbl">Sensible versus crazy</span>
+<p style="font-size:15px;line-height:1.55">An idea is sensible if it applies to everyone, can be undone, costs no money and no one's progress, and its reason fits in two sentences and is posted publicly. Fail any check and it is crazy. Wiping one player's base, giving a friend free diamonds and deleting the log are crazy.</p>
+<p style="font-size:15px;line-height:1.55;color:var(--muted)">Disputes go to the Owner, who decides within 48 hours and posts the answer. Repeated or deliberate breaches get the Head Admin removed mid-term, with a public reason.</p>
+</div>
+</section>
+
+<!-- ELECTIONS -->
+<section id="elections" class="wrap" style="padding-top:24px;padding-bottom:96px;display:flex;flex-wrap:wrap;gap:48px">
+<div style="flex:1 1 420px;min-width:0;display:flex;flex-direction:column;gap:16px">
+<span class="lbl">Elections</span>
+<h2 class="h sec-title">Pick three. Points decide.</h2>
+<p class="sub">Ballots are anonymous and cannot be changed. You cannot vote for yourself. At least two candidates must run, or the election is cancelled and the Owner decides.</p>
+<div class="glass" style="padding:20px 24px;display:flex;flex-direction:column;gap:10px">
+<span class="lbl">To run or vote</span>
+<div style="display:flex;gap:10px;font-size:16px"><span aria-hidden="true" style="color:var(--ok)">&#10003;</span> In the server for 30 days or more</div>
+<div style="display:flex;gap:10px;font-size:16px"><span aria-hidden="true" style="color:var(--ok)">&#10003;</span> Minecraft account linked through DiscordSRV</div>
+</div>
+<div class="glass" style="padding:20px 24px;display:flex;flex-direction:column;gap:10px">
+<span class="lbl">Ties</span>
+<ol style="padding-left:20px;display:flex;flex-direction:column;gap:6px;line-height:1.5;font-size:15px">
+<li>Most points wins</li><li>Then most 1st-place votes</li><li>Then most 2nd-place votes</li><li>Then a 48 hour runoff between the tied candidates</li>
+</ol>
+</div>
+</div>
+<div style="flex:1 1 420px;min-width:0">
+<div class="edge"><div class="glass" style="padding:28px;display:flex;flex-direction:column;gap:18px">
+<span class="lbl">Worked example · 5 ballots</span>
+<div style="display:flex;flex-direction:column;gap:8px"><div style="display:flex;justify-content:space-between;gap:12px"><b>Candidate A</b><span class="mono">11 pts · 3 first</span></div><div style="height:14px;border-radius:7px;background:rgba(255,255,255,.1);overflow:hidden"><div style="height:100%;width:100%;background:#F2C14E;border-radius:7px"></div></div></div>
+<div style="display:flex;flex-direction:column;gap:8px"><div style="display:flex;justify-content:space-between;gap:12px"><b>Candidate B</b><span class="mono">8 pts · 1 first</span></div><div style="height:14px;border-radius:7px;background:rgba(255,255,255,.1);overflow:hidden"><div style="height:100%;width:73%;background:#8FB8FF;border-radius:7px"></div></div></div>
+<div style="display:flex;flex-direction:column;gap:8px"><div style="display:flex;justify-content:space-between;gap:12px"><b>Candidate C</b><span class="mono">6 pts · 1 first</span></div><div style="height:14px;border-radius:7px;background:rgba(255,255,255,.1);overflow:hidden"><div style="height:100%;width:55%;background:#B49BFF;border-radius:7px"></div></div></div>
+<div style="display:flex;flex-direction:column;gap:8px"><div style="display:flex;justify-content:space-between;gap:12px"><b>Candidate D</b><span class="mono">5 pts · 0 first</span></div><div style="height:14px;border-radius:7px;background:rgba(255,255,255,.1);overflow:hidden"><div style="height:100%;width:45%;background:#7FE0A8;border-radius:7px"></div></div></div>
+<p style="font-size:14px;color:var(--muted);line-height:1.5">1st choice earns 3 points, 2nd earns 2, 3rd earns 1. The winner takes Head Admin the moment voting closes. The outgoing Head Admin becomes Admin, or a player if they step down.</p>
+</div></div>
+</div>
+</section>
+
+<!-- STAFF -->
+<section id="staff" class="wrap" style="padding-top:24px;padding-bottom:96px">
+<div style="display:flex;flex-wrap:wrap;gap:48px">
+<div style="flex:1 1 340px;min-width:0;display:flex;flex-direction:column;gap:16px">
+<span class="lbl">Staff</span>
+<h2 class="h sec-title">Apply here or with /apply in Discord.</h2>
+<p class="sub">The form is short. An admin reviews it and replies in the application thread or by DM. You can apply the day you join, with no tenure or account requirement.</p>
+<div class="glass" style="padding:16px 20px;display:flex;flex-direction:column;gap:6px">
+<span class="lbl">Sign in with Discord</span>
+<div id="who" style="font-size:15px">Sign in so the application lands in the staff channel under your name.</div>
+<div style="font-size:13px;color:var(--muted)">We only read your Discord name and ID. Nothing is posted for you.</div>
+</div>
+</div>
+<div style="flex:1 1 480px;min-width:0">
+<div id="app-signin" class="glass" style="padding:28px;display:flex;flex-direction:column;gap:16px">
+<div class="h" style="font-size:22px;font-weight:600">Sign in to apply</div>
+<p id="signin-note" class="sub" style="font-size:15px">Sign-in is not switched on yet. Use /apply in Discord for now.</p>
+<div style="display:flex;flex-wrap:wrap;gap:12px"><a id="signin-btn" class="btn" href="/auth/login" style="display:none">Sign in with Discord</a><a class="btn2" href="https://discord.gg/724WY2fVSu" rel="noopener">Join the Discord</a></div>
+</div>
+<form id="app-form" class="glass" style="display:none;padding:28px;flex-direction:column;gap:18px" novalidate>
+<div style="display:flex;flex-direction:column;gap:6px"><label for="f-mc" style="font-weight:600;font-size:15px">Minecraft username</label><input id="f-mc" class="field" type="text" maxlength="16" autocomplete="off"></div>
+<div style="display:flex;flex-direction:column;gap:6px"><label for="f-why" style="font-weight:600;font-size:15px">Why do you want to be staff?</label><textarea id="f-why" class="field" rows="4" maxlength="1000"></textarea></div>
+<div style="display:flex;flex-direction:column;gap:6px"><label for="f-exp" style="font-weight:600;font-size:15px">Moderation or admin experience <span style="font-weight:400;color:var(--muted)">(optional)</span></label><textarea id="f-exp" class="field" rows="3" maxlength="1000"></textarea></div>
+<div style="display:flex;flex-direction:column;gap:6px"><label for="f-hrs" style="font-weight:600;font-size:15px">Hours per week you can be online</label><input id="f-hrs" class="field" type="text" maxlength="50" autocomplete="off"></div>
+<div id="f-err" role="alert" style="color:var(--bad);font-size:14px;display:none"></div>
+<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center"><button id="f-send" class="btn" type="submit">Send application</button><button id="f-out" class="btn2" type="button">Sign out</button></div>
+</form>
+<div id="app-done" class="edge" style="display:none"><div class="glass" role="status" style="padding:28px;display:flex;flex-direction:column;gap:14px">
+<span class="lbl" style="color:var(--ok)">Application sent</span>
+<div class="h" style="font-size:26px;font-weight:600">Your application is with the admins.</div>
+<p class="sub" style="font-size:16px">A thread opens in the staff channel within a minute. Replies come there or by Discord DM, so join the Discord if you have not yet.</p>
+<div><a class="btn" href="https://discord.gg/724WY2fVSu" rel="noopener">Join the Discord</a></div>
+</div></div>
+</div>
+</div>
+</section>
+</main>
+
+<footer class="glass" style="border-radius:0;border-width:1px 0 0 0">
+<div class="wrap" style="padding-top:48px;padding-bottom:16px;display:flex;flex-wrap:wrap;gap:32px;align-items:center;justify-content:space-between">
+<div style="display:flex;flex-direction:column;gap:10px;max-width:620px">
+<h2 class="h" style="font-size:30px;font-weight:600">Join Discord, link your account, play.</h2>
+<p class="sub" style="font-size:16px">Moderation is strict on new players and on anyone who has not linked their Minecraft account. Run <span class="mono" style="color:var(--fg)">/discord link</span> in game early.</p>
+</div>
+<a class="btn" href="https://discord.gg/724WY2fVSu" rel="noopener">Join the Discord</a>
+</div>
+<div class="wrap" style="padding-bottom:40px;font-size:13px;color:var(--muted)">Refract SMP is not affiliated with Mojang or Microsoft.</div>
+</footer>
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var DAY = 86400000, state = { target: null };
+
+  function num(n) { return n === null || n === undefined ? '—' : String(n); }
+  function p2(n) { return String(n).padStart(2, '0'); }
+  function ago(iso) {
+    var s = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000);
+    if (s < 3600) return Math.max(1, Math.round(s / 60)) + ' min ago';
+    if (s < 86400) return Math.round(s / 3600) + ' h ago';
+    return Math.round(s / 86400) + ' days ago';
+  }
+
+  function render(s) {
+    s = s || {};
+    var fresh = s.updated && Date.now() - new Date(s.updated).getTime() < 10 * 60000;
+    $('live-dot').className = 'dot' + (fresh ? ' on' : '');
+    $('live-text').textContent = fresh ? 'Live from the server' : (s.updated ? 'Last update ' + ago(s.updated) : 'Waiting for the server');
+
+    if (s.address) {
+      $('addr').textContent = s.address;
+      var c = $('copy'); c.style.display = '';
+      c.onclick = function () {
+        try { navigator.clipboard.writeText(s.address); } catch (e) {}
+        c.textContent = 'Copied'; setTimeout(function () { c.textContent = 'Copy'; }, 1800);
+      };
+    }
+    if (s.version) { var v = $('ver'); v.textContent = s.version; v.style.display = ''; }
+
+    $('st-members').textContent = num(s.members);
+    $('st-linked').textContent = num(s.linked);
+    $('st-staff').textContent = num(s.team);
+
+    var h = s.head;
+    if (h && h.name) {
+      $('ha-name').textContent = h.name;
+      var av = $('ha-av');
+      if (h.avatar && /^https:\/\/cdn\.discordapp\.com\//.test(h.avatar)) {
+        av.textContent = '';
+        var im = document.createElement('img');
+        im.src = h.avatar; im.alt = ''; im.width = 64; im.height = 64; im.style.cssText = 'width:100%;height:100%;object-fit:cover';
+        av.appendChild(im);
+      } else { av.textContent = h.name.charAt(0).toUpperCase(); }
+      $('ha-sub').textContent = h.term ? 'Term ' + h.term : 'Head Admin';
+      if (h.since) {
+        var day = Math.min(90, Math.max(1, Math.floor((Date.now() - new Date(h.since).getTime()) / DAY) + 1));
+        $('ha-term').style.display = 'flex';
+        $('ha-day').textContent = 'Day ' + day + ' of 90';
+        $('ha-prev').textContent = h.term > 1 ? 'Term ' + h.term : 'First term';
+        $('ha-bar').style.width = (day / 90 * 100).toFixed(1) + '%';
+      }
+    }
+
+    var e = s.election;
+    if (e && e.label) {
+      $('cd-label').textContent = e.label;
+      state.target = e.target ? new Date(e.target).getTime() : null;
+    } else if (h && h.since && !isNaN(new Date(h.since).getTime())) {
+      // no election from the bot: term is 90 days, so it ends 90 days after the head admin took over
+      state.target = new Date(h.since).getTime() + 90 * DAY;
+      $('cd-label').textContent = 'Head admin term ends';
+    } else { state.target = null; $('cd-label').textContent = 'No election scheduled'; }
+    tick();
+
+    renderGeneral(s.general);
+
+    var log = $('log');
+    if (s.log && s.log.length) {
+      log.textContent = '';
+      s.log.forEach(function (a) {
+        var row = document.createElement('div');
+        row.style.cssText = 'display:flex;flex-wrap:wrap;gap:4px 16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1)';
+        var when = document.createElement('span');
+        when.className = 'mono'; when.style.cssText = 'flex:none;width:96px;font-size:13px;color:var(--muted)';
+        when.textContent = a.when ? ago(a.when) : '';
+        var lav = document.createElement('div');
+        lav.style.cssText = 'flex:none;width:28px;height:28px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;font:700 12px Sora,sans-serif;color:#0B0D12;background:' + PAL[((a.by || '?').charCodeAt(0)) % PAL.length];
+        setAvatar(lav, a.avatar, a.by || '?');
+        var box = document.createElement('div'); box.style.cssText = 'flex:1 1 320px;min-width:0';
+        var t = document.createElement('div'); t.style.cssText = 'font-weight:600;font-size:15px'; t.textContent = a.action || '';
+        var r = document.createElement('div'); r.style.cssText = 'font-size:14px;color:var(--muted);line-height:1.45';
+        r.textContent = (a.reason || '') + (a.by ? ' · ' + a.by : '');
+        box.appendChild(t); box.appendChild(r); row.appendChild(when); row.appendChild(lav); row.appendChild(box); log.appendChild(row);
+      });
+    }
+  }
+
+  function setAvatar(el, url, name) {
+    if (url && /^https:\/\/cdn\.discordapp\.com\//.test(url)) {
+      var im = document.createElement('img');
+      im.src = url; im.alt = ''; im.width = 38; im.height = 38; im.loading = 'lazy';
+      im.style.cssText = 'width:100%;height:100%;border-radius:50%;object-fit:cover';
+      im.onerror = function () { el.textContent = name.charAt(0).toUpperCase(); };
+      el.textContent = ''; el.appendChild(im);
+    } else { el.textContent = name.charAt(0).toUpperCase(); }
+  }
+  var PAL = ['#F4A6A0', '#F6C990', '#E6E08F', '#9FDDB5', '#9CCBF5', '#C3B1F5'];
+  var ROLE = { head: '#F2C14E', admin: '#FF8A6B', staff: '#6DB3FF' };
+  function renderGeneral(list) {
+    var box = $('general');
+    if (!list || !list.length) return;
+    box.textContent = '';
+    list.forEach(function (m) {
+      var who = m.who || '?';
+      var sum = 0; for (var i = 0; i < who.length; i++) sum += who.charCodeAt(i);
+      var row = document.createElement('div'); row.style.cssText = 'display:flex;gap:12px;align-items:flex-start';
+      var av = document.createElement('div');
+      av.style.cssText = 'flex:none;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 15px Sora,sans-serif;color:#0B0D12;background:' + PAL[sum % PAL.length];
+      setAvatar(av, m.avatar, who);
+      var col = document.createElement('div'); col.style.cssText = 'min-width:0;display:flex;flex-direction:column;gap:2px';
+      var head = document.createElement('div'); head.style.cssText = 'display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px';
+      var nm = document.createElement('span'); nm.style.cssText = 'font-weight:600;font-size:15px;color:' + (ROLE[m.role] || 'var(--fg)'); nm.textContent = who;
+      var tm = document.createElement('span'); tm.className = 'mono'; tm.style.cssText = 'font-size:12px;color:var(--muted)'; tm.textContent = m.when ? ago(m.when) : '';
+      var tx = document.createElement('div'); tx.style.cssText = 'font-size:15px;line-height:1.45;overflow-wrap:anywhere'; tx.textContent = m.text || '';
+      head.appendChild(nm); head.appendChild(tm); col.appendChild(head); col.appendChild(tx); row.appendChild(av); row.appendChild(col); box.appendChild(row);
+    });
+  }
+
+  function showStaff(mode, me) {
+    $('app-signin').style.display = mode === 'signin' ? 'flex' : 'none';
+    $('app-form').style.display = mode === 'form' ? 'flex' : 'none';
+    $('app-done').style.display = mode === 'done' ? 'block' : 'none';
+    if (mode === 'signin') {
+      var ok = me && me.configured;
+      $('signin-btn').style.display = ok ? '' : 'none';
+      $('signin-note').textContent = ok ? 'Sign in with Discord so the application lands in the staff channel under your name.' : 'Sign-in is not switched on yet. Use /apply in Discord for now.';
+    }
+    if (mode === 'form') $('who').textContent = 'Signed in as ' + me.user.name;
+  }
+  function loadMe() {
+    fetch('/api/me').then(function (r) { return r.json(); }).then(function (me) {
+      showStaff(me.user ? 'form' : 'signin', me);
+    }).catch(function () { showStaff('signin', null); });
+  }
+  function fail(msg) { var e = $('f-err'); e.textContent = msg; e.style.display = msg ? 'block' : 'none'; }
+  $('app-form').addEventListener('submit', function (ev) {
+    ev.preventDefault(); fail('');
+    var b = $('f-send'); b.disabled = true;
+    fetch('/api/apply', {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ mc: $('f-mc').value, why: $('f-why').value, exp: $('f-exp').value, hours: $('f-hrs').value })
+    }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (x) { b.disabled = false; if (x.ok) showStaff('done'); else fail(x.j.error || 'Something went wrong.'); })
+      .catch(function () { b.disabled = false; fail('Could not reach the server. Try again.'); });
+  });
+  $('f-out').addEventListener('click', function () {
+    fetch('/auth/logout', { method: 'POST' }).then(function () { loadMe(); $('who').textContent = 'Sign in so the application lands in the staff channel under your name.'; });
+  });
+  loadMe();
+
+  function tick() {
+    var t = $('cd-timer');
+    if (!state.target) { t.style.display = 'none'; return; }
+    var d = Math.max(0, state.target - Date.now());
+    t.style.display = 'flex';
+    $('cd-d').textContent = p2(Math.floor(d / DAY));
+    $('cd-h').textContent = p2(Math.floor(d / 3600000) % 24);
+    $('cd-m').textContent = p2(Math.floor(d / 60000) % 60);
+    $('cd-s').textContent = p2(Math.floor(d / 1000) % 60);
+  }
+
+  function load() {
+    fetch('/api/status').then(function (r) { return r.json(); }).then(render).catch(function () { render(null); });
+  }
+  load();
+  setInterval(load, 30000);
+  setInterval(tick, 1000);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "name": "refract",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-10-01",
+  "account_id": "009b3131bcf02a9d67798f3a0d5a8141",
+  "workers_dev": false,
+  "routes": [
+    { "pattern": "refract-smp.com", "custom_domain": true },
+    { "pattern": "www.refract-smp.com", "custom_domain": true }
+  ],
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*", "/auth/*"]
+  },
+  "kv_namespaces": [{ "binding": "STATUS", "id": "e3c3161e625c4e14927032947718d602" }],
+  "vars": { "SERVER_ADDRESS": "", "SERVER_VERSION": "", "DISCORD_CLIENT_ID": "898041623370403870", "BOT_URL": "https://api.refract-smp.com" }
+}
