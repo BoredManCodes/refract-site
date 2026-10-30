@@ -445,11 +445,51 @@ Refract SMP</a>
   }
   var PAL = ['var(--av1)', 'var(--av2)', 'var(--av3)', 'var(--av4)', 'var(--av5)', 'var(--av6)'];
   var ROLE = { head: 'var(--gold)', admin: 'var(--role-admin)', staff: 'var(--role-staff)' };
+  var IMG_URL = /^https:\/\/(cdn\.discordapp\.com|media\.discordapp\.net)\/\S+$/;
+  function renderText(el, text) {
+    text.split(/(https:\/\/\S+)/).forEach(function (part) {
+      if (!part) return;
+      if (IMG_URL.test(part)) {
+        var a = document.createElement('a'); a.href = part; a.target = '_blank'; a.rel = 'noopener noreferrer';
+        var im = document.createElement('img');
+        im.src = part; im.alt = 'image'; im.loading = 'lazy';
+        im.style.cssText = 'display:block;max-width:100%;max-height:280px;border-radius:8px;margin-top:4px';
+        im.onerror = function () { a.textContent = part; };
+        a.appendChild(im); el.appendChild(a);
+      } else { el.appendChild(document.createTextNode(part)); }
+    });
+  }
+  var chat = { seen: {}, queue: [], timer: null, started: false };
+  var CHAT_MAX = 30, CHAT_SEED = 12;
   function renderGeneral(list) {
     var box = $('general');
     if (!list || !list.length) return;
-    box.textContent = '';
-    list.forEach(function (m) {
+    var fresh = list.slice(-CHAT_MAX).filter(function (m) {
+      var k = (m.when || '') + '|' + (m.who || '') + '|' + (m.text || '');
+      if (chat.seen[k]) return false;
+      chat.seen[k] = 1; return true;
+    });
+    if (!chat.started) {
+      // start part-way through the backlog, then let the rest arrive one by one
+      chat.started = true;
+      box.textContent = '';
+      fresh.slice(0, CHAT_SEED).forEach(function (m) { addMessage(box, m, false); });
+      chat.queue = fresh.slice(CHAT_SEED);
+    } else { chat.queue = chat.queue.concat(fresh); }
+    pump(box);
+  }
+  function pump(box) {
+    if (chat.timer || !chat.queue.length) return;
+    chat.timer = setTimeout(function () {
+      chat.timer = null;
+      var m = chat.queue.shift();
+      if (m) addMessage(box, m, true);
+      pump(box);
+    }, 1500 + Math.random() * 3500);
+  }
+  function addMessage(box, m, animate) {
+    while (box.children.length >= CHAT_MAX) box.removeChild(box.firstChild);
+    {
       var who = m.who || '?';
       var sum = 0; for (var i = 0; i < who.length; i++) sum += who.charCodeAt(i);
       var row = document.createElement('div'); row.style.cssText = 'display:flex;gap:12px;align-items:flex-start';
@@ -459,10 +499,14 @@ Refract SMP</a>
       var col = document.createElement('div'); col.style.cssText = 'min-width:0;display:flex;flex-direction:column;gap:2px';
       var head = document.createElement('div'); head.style.cssText = 'display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px';
       var nm = document.createElement('span'); nm.style.cssText = 'font-weight:600;font-size:15px;color:' + (ROLE[m.role] || 'var(--fg)'); nm.textContent = who;
-      var tm = document.createElement('span'); tm.className = 'mono'; tm.style.cssText = 'font-size:12px;color:var(--muted)'; tm.textContent = m.when ? ago(m.when) : '';
-      var tx = document.createElement('div'); tx.style.cssText = 'font-size:15px;line-height:1.45;overflow-wrap:anywhere'; tx.textContent = m.text || '';
-      head.appendChild(nm); head.appendChild(tm); col.appendChild(head); col.appendChild(tx); row.appendChild(av); row.appendChild(col); box.appendChild(row);
-    });
+      var tx = document.createElement('div'); tx.style.cssText = 'font-size:15px;line-height:1.45;overflow-wrap:anywhere'; renderText(tx, m.text || '');
+      head.appendChild(nm); col.appendChild(head); col.appendChild(tx); row.appendChild(av); row.appendChild(col);
+      if (animate) {
+        row.style.opacity = '0'; row.style.transform = 'translateY(8px)'; row.style.transition = 'opacity .35s, transform .35s';
+        box.appendChild(row);
+        requestAnimationFrame(function () { requestAnimationFrame(function () { row.style.opacity = '1'; row.style.transform = 'none'; }); });
+      } else { box.appendChild(row); }
+    }
   }
 
   function showStaff(mode, me) {
