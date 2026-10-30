@@ -505,6 +505,25 @@ Refract SMP</a>
     if (text != null) n.textContent = text;
     return n;
   }
+  // text with discord custom emojis (<:name:id> / <a:name:id>) swapped for images from the discord cdn
+  var EMOJI_RE = /<(a?):(\w{2,32}):(\d{15,25})>/g;
+  function setRich(el, text) {
+    text = text || '';
+    el.textContent = '';
+    var only = text.replace(EMOJI_RE, '').trim() === '' && text.search(EMOJI_RE) !== -1;
+    var size = only ? 48 : 22, last = 0, m;
+    EMOJI_RE.lastIndex = 0;
+    while ((m = EMOJI_RE.exec(text))) {
+      if (m.index > last) el.appendChild(document.createTextNode(text.slice(last, m.index)));
+      var im = document.createElement('img');
+      im.src = 'https://cdn.discordapp.com/emojis/' + m[3] + (m[1] ? '.gif' : '.webp') + '?size=' + (size * 2) + '&quality=lossless';
+      im.alt = ':' + m[2] + ':'; im.title = ':' + m[2] + ':'; im.loading = 'lazy';
+      im.style.cssText = 'display:inline-block;width:' + size + 'px;height:' + size + 'px;object-fit:contain;vertical-align:' + (only ? 'bottom' : '-0.3em');
+      el.appendChild(im);
+      last = m.index + m[0].length;
+    }
+    if (last < text.length) el.appendChild(document.createTextNode(text.slice(last)));
+  }
   function addEmbed(el, e) {
     var colour = /^#[0-9a-f]{6}$/i.test(e.color || '') ? e.color : '#1e1f22';
     var card = mk('div', 'margin-top:6px;max-width:520px;box-sizing:border-box;border-left:4px solid ' + colour + ';background:#2b2d31;border-radius:4px;padding:8px 16px 16px 12px;display:flex;gap:16px;align-items:flex-start;color:#dbdee1;font-family:"gg sans","Noto Sans","Helvetica Neue",Helvetica,Arial,sans-serif');
@@ -525,7 +544,7 @@ Refract SMP</a>
       else tt = mk('div', 'font-weight:600;font-size:16px;line-height:1.375;color:#f2f3f5', e.title);
       body.appendChild(tt);
     }
-    if (e.description) body.appendChild(mk('div', 'font-size:14px;line-height:1.375;overflow-wrap:anywhere;white-space:pre-wrap', e.description));
+    if (e.description) { var ds = mk('div', 'font-size:14px;line-height:1.375;overflow-wrap:anywhere;white-space:pre-wrap'); setRich(ds, e.description); body.appendChild(ds); }
     if (e.fields && e.fields.length) {
       var grid = mk('div', 'display:grid;grid-template-columns:repeat(12,1fr);gap:8px');
       var run = 0;
@@ -597,7 +616,7 @@ Refract SMP</a>
       var col = document.createElement('div'); col.style.cssText = 'min-width:0;display:flex;flex-direction:column;gap:2px';
       var head = document.createElement('div'); head.style.cssText = 'display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px';
       var nm = document.createElement('span'); nm.style.cssText = 'font-weight:600;font-size:15px;color:' + (ROLE[m.role] || 'var(--fg)'); nm.textContent = who;
-      var tx = document.createElement('div'); tx.style.cssText = 'font-size:15px;line-height:1.45;overflow-wrap:anywhere'; tx.textContent = m.text || ''; addMedia(tx, m.media);
+      var tx = document.createElement('div'); tx.style.cssText = 'font-size:15px;line-height:1.45;overflow-wrap:anywhere'; setRich(tx, m.text); addMedia(tx, m.media);
       (m.more_media || []).forEach(function (mm) { addMedia(tx, mm); });
       (m.embeds || []).forEach(function (e) { addEmbed(tx, e); });
       if (!m.text && !tx.firstChild) tx.style.display = 'none';
@@ -606,7 +625,7 @@ Refract SMP</a>
       if (m.reply && m.reply.who) {
         var rp = document.createElement('div');
         rp.style.cssText = 'font-size:13px;color:var(--muted);border-left:2px solid rgba(255,255,255,.2);padding-left:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
-        rp.textContent = 'Replying to ' + m.reply.who + (m.reply.text ? ': ' + m.reply.text : '');
+        setRich(rp, 'Replying to ' + m.reply.who + (m.reply.text ? ': ' + m.reply.text : ''));
         col.appendChild(rp);
       }
       col.appendChild(head); col.appendChild(tx); row.appendChild(av); row.appendChild(col);
