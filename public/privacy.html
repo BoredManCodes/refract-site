@@ -112,6 +112,9 @@ Refract SMP</a>
 <tr><td>Staff application: Minecraft username, your answers, weekly hours</td><td>The application form or the /apply command</td><td>Review your application. Posted to a private staff channel in Discord.</td></tr>
 <tr><td>Linked Minecraft username and UUID</td><td>DiscordSRV, when you run /discord link</td><td>Account linking, election eligibility, moderation.</td></tr>
 <tr><td>IP address, username, UUID, join and leave times, chat, commands, in-game actions</td><td>The Minecraft server</td><td>Run the server, enforce the rules, investigate griefing and ban evasion.</td></tr>
+<tr><td>Discord display name, avatar, join date, and for people who leave: leave date, whether they left, were kicked or were banned, and the kick or ban reason</td><td>The Discord server, read by the bot, and Discord's ban list</td><td>Show the public Members page and keep a record of departures. Bans already in Discord's ban list were copied in when the page launched.</td></tr>
+<tr><td>Page views, referrer, country, region and city, device, browser, operating system, screen size, language, light or dark mode, connection type, new or returning visitor, time on page, scroll depth, clicks on links, campaign tags</td><td>Your browser, when you load a page on this site. A random visitor ID is generated in your browser and sent with each event. Known bots are dropped.</td><td>Count visitors, see which pages are used, and fix the site. Stored without your name or IP address.</td></tr>
+<tr><td>IP address, user agent, country, city, region, visitor ID and pages visited</td><td>Your browser's request to this site's tracking endpoint</td><td>A live visit log posted to a private staff channel in Discord, so staff can see activity and spot abuse. Unlike the stats above, this log includes your IP address.</td></tr>
 <tr><td>Discord messages, roles, join date</td><td>The Discord server</td><td>Community moderation. Stored by Discord, and quoted by staff in moderation logs where needed.</td></tr>
 <tr><td>Election candidacy and ballots</td><td>Discord and the election bot</td><td>Run Head Admin elections. Ballots are anonymous and cannot be changed.</td></tr>
 <tr><td>Vote and playtime counts</td><td>Voting sites and the server</td><td>Give rewards.</td></tr>
@@ -123,13 +126,15 @@ Refract SMP</a>
 </section>
 
 <section>
-<h2 class="h">Cookies</h2>
-<p>The site sets two cookies, both HttpOnly, Secure and SameSite=Lax. Neither tracks you across sites.</p>
+<h2 class="h">Cookies and local storage</h2>
+<p>The site sets two cookies, both HttpOnly, Secure and SameSite=Lax. Neither tracks you across sites. It also keeps two items in your browser's own storage.</p>
 <ul>
 <li><span class="mono">oauth_state</span> is a random value that makes the Discord sign-in safe from forgery. It lasts 10 minutes and is cleared when sign-in finishes.</li>
 <li><span class="mono">sid</span> is a random session ID that keeps you signed in. It lasts 7 days or until you sign out. The matching session record holds your Discord ID, name, username and avatar link, and is deleted at expiry or on sign out.</li>
+<li><span class="mono">refract_vid</span> is a random visitor ID in your browser's local storage. It has no expiry. It lets the site tell a returning visitor from a new one and count unique visitors. It is not linked to your Discord account, and clearing your site data resets it.</li>
+<li><span class="mono">cta</span> is a flag in session storage that stops the staff applications notice showing again in the same browser session.</li>
 </ul>
-<p>The site runs no analytics, advertising or tracking scripts. You only send data to Discord through this site if you press the sign-in button.</p>
+<p>The site runs its own analytics, described under data collected. It runs no advertising scripts and no third-party analytics service. You only send data to Discord through this site if you press the sign-in button, and the visit log described above is sent to Discord by the site itself.</p>
 </section>
 
 <section>
@@ -138,16 +143,18 @@ Refract SMP</a>
 <li>The Head Admin's Discord display name and avatar, and the names and avatars of staff in the public admin log.</li>
 <li>The latest messages from the public #general channel, with each author's display name and avatar. These messages are already public in Discord. When one is deleted there, it leaves the site on the next refresh.</li>
 <li>Counts of Discord members, linked accounts and staff.</li>
-<li>The Members page: every member's Discord display name, avatar and join date, and for people who have left, the date they left, whether they left, were kicked or were banned, and the reason staff recorded for a kick or ban.</li>
+<li>The Staff page: the name, avatar and role of the Owner, Head Admin, Admins and Staff.</li>
+<li>The Members page: every member's Discord display name, avatar and join date, and for people who have left, the date they left, whether they left, were kicked or were banned, and the reason staff recorded for a kick or ban. If you leave and rejoin, your departure entry is removed. If a ban is lifted, the entry stays with the reason removed.</li>
 </ul>
-<p>Staff applications, ballots and IP addresses are not shown on the site. Kicks and bans are shown only as described above.</p>
+<p>Staff applications, ballots, IP addresses and the visit log are not shown on the site. Kicks and bans are shown only as described above.</p>
 </section>
 
 <section>
 <h2 class="h">Third parties</h2>
 <ul>
 <li><b>Discord</b> receives your sign-in and hosts the Discord server, under the Discord Privacy Policy.</li>
-<li><b>Cloudflare</b> hosts this site and a key-value store that holds sessions, rate-limit markers and cached server status.</li>
+<li><b>Cloudflare</b> hosts this site and a key-value store that holds sessions, rate-limit markers, cached server status, cached member lists and the analytics counts.</li>
+<li><b>Discord</b> also receives the visit log described above, and the member and ban data the bot reads from it.</li>
 <li><b>Google Fonts</b> serves the fonts on this site. Your browser requests them from Google, which receives your IP address.</li>
 <li><b>Mojang and Microsoft</b> authenticate Minecraft accounts and hold your account data under their own policies.</li>
 <li><b>Voting sites</b> receive whatever you give them, under their own policies. We receive your Minecraft username and the fact that you voted.</li>
@@ -161,6 +168,10 @@ Refract SMP</a>
 <ul>
 <li>Site session record: up to 7 days, or until you sign out.</li>
 <li>Application rate-limit marker: 5 minutes.</li>
+<li>Analytics counts: kept without a time limit. They hold the date, page, country and the other fields listed above against a random visitor ID, with no name or IP address.</li>
+<li>Live visit state used to group a visit into one message: 2 hours.</li>
+<li>Visit log messages in Discord: kept until staff delete them. They include your IP address.</li>
+<li>Departure records on the Members page: kept until you rejoin or ask us to remove them. A ban entry stays while the ban is in force.</li>
 <li>Staff applications: kept in the staff channel during review and while you serve as staff. Staff can delete them after a decision.</li>
 <li>Minecraft logs, including IP addresses and chat: kept while needed for moderation. Ban records stay as long as the ban is in force.</li>
 <li>Admin log entries: kept permanently, because the log is public and staff cannot edit it.</li>
@@ -170,7 +181,8 @@ Refract SMP</a>
 <section>
 <h2 class="h">Your choices</h2>
 <p>You can email <a href="mailto:owner@refract-smp.com">owner@refract-smp.com</a> or ask an Admin to show you the data we hold about you, correct it, or delete it. We answer within 30 days. Some data stays while it is needed to enforce an active ban, to keep the admin log intact, or to meet a legal duty. We tell you which, and why.</p>
-<p>You can also sign out in the staff section of the home page, remove this site's access in your Discord settings under Authorized Apps, and unlink your Minecraft account with /discord unlink.</p>
+<p>You can reset your analytics visitor ID by clearing this site's data in your browser. We do not currently offer a switch to turn analytics off, and we do not read Do Not Track or similar browser signals. To have your IP address removed from visit log messages or your entry removed from the Members page, email us. We will remove it unless the entry is a ban still in force.</p>
+<p>You can also sign out on the staff page, remove this site's access in your Discord settings under Authorized Apps, and unlink your Minecraft account with /discord unlink.</p>
 </section>
 
 <section>
