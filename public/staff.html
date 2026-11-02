@@ -25,7 +25,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Sora:wght@500;600;700&display=swap">
 <style>
-:root{--fg:#EEF1F8;--muted:#AEB5C6;--accent:#9DBBFF;--ok:#6FDDA2;--warn:#F2C14E;--bad:#FF9484;--spec:.8;--paper:#080A11;--ink:#0B0D12;--gold:#F2C14E;--sky:#8FB8FF;--violet:#B49BFF;--mint:#7FE0A8;--sand:#F4C77A;--role-admin:#FF8A6B;--role-staff:#6DB3FF;--glow-blue:#2A3C8F;--glow-violet:#5B3C9E;--s1:#FF9E9E;--s2:#FFD79A;--s3:#C9F0A8;--s4:#8FD8FF;--s5:#B49BFF;--skip-bg:#fff;--av1:#F4A6A0;--av2:#F6C990;--av3:#E6E08F;--av4:#9FDDB5;--av5:#9CCBF5;--av6:#C3B1F5;--skip-fg:#000}
+:root{--fg:#EEF1F8;--muted:#AEB5C6;--accent:#9DBBFF;--ok:#6FDDA2;--warn:#F2C14E;--bad:#FF9484;--spec:.8;--paper:#080A11;--ink:#0B0D12;--gold:#F2C14E;--sky:#8FB8FF;--violet:#B49BFF;--mint:#7FE0A8;--sand:#F4C77A;--role-admin:#FF8A6B;--role-mod:#C79BFF;--role-staff:#6DB3FF;--glow-blue:#2A3C8F;--glow-violet:#5B3C9E;--s1:#FF9E9E;--s2:#FFD79A;--s3:#C9F0A8;--s4:#8FD8FF;--s5:#B49BFF;--skip-bg:#fff;--av1:#F4A6A0;--av2:#F6C990;--av3:#E6E08F;--av4:#9FDDB5;--av5:#9CCBF5;--av6:#C3B1F5;--skip-fg:#000}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 html,body{overflow-x:clip}
@@ -83,6 +83,7 @@ Refract SMP</a>
 <a class="navlink" href="/rules">Player rules</a>
 <a class="navlink" href="/privacy">Privacy</a>
 </nav>
+<a class="navlink" href="https://dash.refract-smp.com" rel="noopener">Log in</a>
 <a class="btn" href="https://discord.gg/KRrKVEdMFy" rel="noopener">Discord</a>
 </div>
 </header>
@@ -92,7 +93,7 @@ Refract SMP</a>
 <div style="display:flex;flex-direction:column;gap:14px;max-width:720px">
 <span class="lbl" style="color:var(--ok)">Staff applications are open</span>
 <h1 class="h" style="font-size:44px;line-height:1.08;font-weight:700">The staff team.</h1>
-<p class="sub">The Owner runs the server. The Head Admin is chosen by player vote every 3 months. Admins and Staff handle day to day moderation, and every action that affects players is posted to the public admin log.</p>
+<p class="sub">The Owner runs the server. The Head Admin is chosen by player vote every 3 months. Admins, Moderators and other Staff handle day to day moderation, and every action that affects players is posted to the public admin log.</p>
 <div><a class="btn" href="#apply">Apply for staff</a></div>
 </div>
 <div id="team-list" style="display:flex;flex-direction:column;gap:28px"><div style="color:var(--muted);font-size:15px">Loading the team.</div></div>
@@ -153,7 +154,8 @@ Refract SMP</a>
     { key: 'owner', title: 'Owner', color: 'var(--gold)' },
     { key: 'head', title: 'Head Admin', color: 'var(--gold)' },
     { key: 'admin', title: 'Admins', color: 'var(--role-admin)' },
-    { key: 'staff', title: 'Staff', color: 'var(--role-staff)' }
+    { key: 'mod', title: 'Moderators', color: 'var(--role-mod)' },
+    { key: 'staff', title: 'Other Staff', color: 'var(--role-staff)' }
   ];
   function mk(tag, css, text) {
     var n = document.createElement(tag);
@@ -183,7 +185,7 @@ Refract SMP</a>
         } else av.textContent = name.charAt(0).toUpperCase();
         var info = mk('div', 'min-width:0;display:flex;flex-direction:column;gap:6px;align-items:flex-start');
         info.appendChild(mk('div', 'font-weight:600;font-size:17px;overflow-wrap:anywhere', name));
-        var tag = mk('span', 'color:' + g.color, g.key === 'owner' ? 'Owner' : g.key === 'head' ? 'Head Admin' : g.key === 'admin' ? 'Admin' : 'Staff');
+        var tag = mk('span', 'color:' + g.color, g.key === 'owner' ? 'Owner' : g.key === 'head' ? 'Head Admin' : g.key === 'admin' ? 'Admin' : g.key === 'mod' ? 'Moderator' : 'Staff');
         tag.className = 'tag'; info.appendChild(tag);
         card.appendChild(av); card.appendChild(info); row.appendChild(card);
       });
